@@ -10,9 +10,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 
 import java.net.InetSocketAddress;
 
-/**
- * Created by xujiayu on 17/12/28.
- */
 public class TcpServer {
     private int port;
 

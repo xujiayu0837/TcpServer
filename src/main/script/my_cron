@@ -1,0 +1,2 @@
+*/1 * * * * sh /home/xujy/ihome/script/monitor.sh 9001 /home/xujy/ihome/
+*/1 * * * * python3 /home/xujy/ihome/script/save_to_db.py

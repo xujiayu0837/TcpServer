@@ -10,9 +10,6 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by xujiayu on 17/12/28.
- */
 public class TcpServerHandler extends ChannelInboundHandlerAdapter {
     private final static char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     private final static String PREFIX = "DCCDAAAAE0";

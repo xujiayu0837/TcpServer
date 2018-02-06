@@ -1,15 +1,15 @@
+import sys
 import os
 import time
 import datetime
+import argparse
 import pymysql
 
-PATH = "/home/xujy/ihome"
 PREFIX = "0C0004"
-BUF = 256
 
 # 获取mysql连接
-def connect_db(host, port, user, passwd, db):
-	conn = pymysql.connect(host=host, port=port, user=user, passwd=passwd, db=db)
+def connect_db(host, port):
+	conn = pymysql.connect(host=host, port=port, user=sys.argv[2], passwd=sys.argv[3], db=sys.argv[4])
 	return conn
 
 def get_start_time_and_end_time(time_tuple):
@@ -38,12 +38,12 @@ def read_file():
 		# print(start_time)
 		# print(end_time)
 
-		conn = connect_db('localhost', 3306, 'root', 'qhiehome2017@123', 'ihome_relay')
+		conn = connect_db('localhost', 3306)
 		cursor = conn.cursor()
 
 		# 更新动作表
 		i = -1
-		with open(os.path.join(PATH, date)) as fr:
+		with open(os.path.join(sys.argv[1], date)) as fr:
 			lines = fr.readlines()
 			nums_line = len(lines)
 			while i >= -nums_line:
@@ -64,16 +64,13 @@ def read_file():
 				data_type = data[40:42]
 				address = data[42:44]
 				command_data = data[44:54]
-				if command_data == "0000000000":
-					i -= 1
-					continue
 				sql = """INSERT INTO t_relay_command(device_id, command, data_type, address, command_data, active_time, state) VALUES(%s, %s, %s, %s, %s, %s, %s)"""
 				cursor.execute(sql, (device_id, command, data_type, address, command_data, ts, 1))
 				i -= 1
 
 		# 更新心跳表
 		i = -1
-		with open(os.path.join(PATH, date)) as fr:
+		with open(os.path.join(sys.argv[1], date)) as fr:
 			lines = fr.readlines()
 			nums_line = len(lines)
 			while i >= -nums_line:
@@ -84,7 +81,7 @@ def read_file():
 				if ts >= end_time:
 					i -= 1
 					continue
-				if not data.startswith(PREFIX):
+				if not data.startswith(PREFIX) or len(data) != 24:
 					i -= 1
 					continue
 				sql = """SELECT * FROM t_relay_heartbeat WHERE device_id = %s"""
